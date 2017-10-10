@@ -81,7 +81,7 @@
      whisper-identity (str local-storage-js ethereum-id-js file)
      (fn [result]
        (let [{:keys [error result]} (types/json->clj result)
-             result (json->clj result)]
+             result (types/json->clj result)]
          (log/debug "Parsing commands results: " error result)
          (if error
            (dispatch [::loading-failed! whisper-identity ::error-in-jail error])
