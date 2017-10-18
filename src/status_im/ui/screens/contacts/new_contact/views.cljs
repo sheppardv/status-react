@@ -2,16 +2,16 @@
   (:require-macros [status-im.utils.views :refer [defview letsubs]])
   (:require [re-frame.core :refer [dispatch]]
             [clojure.string :as str]
-            [status-im.components.react :refer [view text]]
-            [status-im.components.text-field.view :refer [text-field]]
-            [status-im.components.status-bar :refer [status-bar]]
-            [status-im.components.toolbar.view :refer [toolbar]]
-            [status-im.components.toolbar.actions :as act]
-            [status-im.components.toolbar.styles :refer [toolbar-title-container
+            [status-im.ui.components.react :refer [view text]]
+            [status-im.ui.components.text-field.view :refer [text-field]]
+            [status-im.ui.components.status-bar :refer [status-bar]]
+            [status-im.ui.components.toolbar.view :refer [toolbar]]
+            [status-im.ui.components.toolbar.actions :as act]
+            [status-im.ui.components.toolbar.styles :refer [toolbar-title-container
                                                          toolbar-title-text
                                                          toolbar-background1]]
-            [status-im.components.styles :refer [icon-ok button-input-container button-input color-blue]]
-            [status-im.components.image-button.view :refer [scan-button]]
+            [status-im.ui.components.styles :refer [icon-ok button-input-container button-input color-blue]]
+            [status-im.ui.components.image-button.view :refer [scan-button]]
             [status-im.i18n :refer [label]]
             [cljs.spec.alpha :as s]
             [status-im.ui.screens.contacts.styles :as st]

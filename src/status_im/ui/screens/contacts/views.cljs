@@ -1,21 +1,21 @@
 (ns status-im.ui.screens.contacts.views
   (:require-macros [status-im.utils.views :refer [defview letsubs]])
   (:require [re-frame.core :refer [dispatch]]
-            [status-im.components.common.common :as common]
-            [status-im.components.react :refer [view text touchable-highlight scroll-view]]
-            [status-im.components.icons.vector-icons :as vi]
-            [status-im.components.native-action-button :refer [native-action-button
+            [status-im.ui.components.common.common :as common]
+            [status-im.ui.components.react :refer [view text touchable-highlight scroll-view]]
+            [status-im.ui.components.icons.vector-icons :as vi]
+            [status-im.ui.components.native-action-button :refer [native-action-button
                                                                native-action-button-item]]
-            [status-im.components.toolbar-new.view :as toolbar]
-            [status-im.components.toolbar-new.actions :as act]
-            [status-im.components.drawer.view :as drawer]
-            [status-im.components.icons.custom-icons :refer [ion-icon]]
-            [status-im.components.contact.contact :refer [contact-view]]
+            [status-im.ui.components.toolbar-new.view :as toolbar]
+            [status-im.ui.components.toolbar-new.actions :as act]
+            [status-im.ui.components.drawer.view :as drawer]
+            [status-im.ui.components.icons.custom-icons :refer [ion-icon]]
+            [status-im.ui.components.contact.contact :refer [contact-view]]
             [status-im.utils.platform :refer [platform-specific ios? android?]]
             [status-im.utils.utils :as u]
             [status-im.i18n :refer [label]]
             [status-im.ui.screens.contacts.styles :as st]
-            [status-im.components.styles :refer [color-blue
+            [status-im.ui.components.styles :refer [color-blue
                                                  create-icon]]))
 
 (def ^:const contacts-limit 5)

@@ -1,17 +1,17 @@
 (ns status-im.ui.screens.group.add-contacts.views
   (:require-macros [status-im.utils.views :refer [defview letsubs]])
   (:require [re-frame.core :refer [dispatch]]
-            [status-im.components.renderers.renderers :as renderers]
-            [status-im.components.react :refer [view keyboard-avoiding-view
+            [status-im.ui.components.renderers.renderers :as renderers]
+            [status-im.ui.components.react :refer [view keyboard-avoiding-view
                                                 text list-view list-item]]
-            [status-im.components.sticky-button :refer [sticky-button]]
-            [status-im.components.status-bar :refer [status-bar]]
-            [status-im.components.toolbar-new.view :refer [toolbar-with-search]]
+            [status-im.ui.components.sticky-button :refer [sticky-button]]
+            [status-im.ui.components.status-bar :refer [status-bar]]
+            [status-im.ui.components.toolbar-new.view :refer [toolbar-with-search]]
             [status-im.utils.listview :refer [to-datasource]]
             [status-im.ui.screens.group.styles :as styles]
             [status-im.ui.screens.contacts.styles :as cstyles]
             [status-im.i18n :refer [label]]
-            [status-im.components.contact.contact :refer [toogle-contact-view]]))
+            [status-im.ui.components.contact.contact :refer [toogle-contact-view]]))
 
 (defn on-toggle [checked? whisper-identity]
   (let [action (if checked? :deselect-contact :select-contact)]

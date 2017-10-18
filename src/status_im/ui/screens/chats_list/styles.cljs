@@ -1,6 +1,6 @@
 (ns status-im.ui.screens.chats-list.styles
   (:require-macros [status-im.utils.styles :refer [defstyle defnstyle]])
-  (:require [status-im.components.styles :refer [color-white
+  (:require [status-im.ui.components.styles :refer [color-white
                                                  color-light-gray
                                                  color-blue
                                                  color-gray5
@@ -9,8 +9,8 @@
                                                  text4-color
                                                  separator-color
                                                  new-messages-count-color]]
-            [status-im.components.tabs.styles :as tabs-st]
-            [status-im.components.toolbar.styles :refer [toolbar-background1
+            [status-im.ui.components.tabs.styles :as tabs-st]
+            [status-im.ui.components.toolbar.styles :refer [toolbar-background1
                                                          toolbar-background2]]
             [status-im.utils.platform :as p]))
 

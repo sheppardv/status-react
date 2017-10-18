@@ -1,6 +1,6 @@
 (ns status-im.chat.styles.screen
   (:require-macros [status-im.utils.styles :refer [defstyle defnstyle]])
-  (:require [status-im.components.styles :refer [chat-background
+  (:require [status-im.ui.components.styles :refer [chat-background
                                                  selected-message-color
                                                  separator-color
                                                  text1-color
@@ -8,7 +8,7 @@
                                                  text4-color
                                                  color-black
                                                  color-gray6]]
-            [status-im.components.toolbar.styles :refer [toolbar-background1]]))
+            [status-im.ui.components.toolbar.styles :refer [toolbar-background1]]))
 
 (def chat-view
   {:flex             1

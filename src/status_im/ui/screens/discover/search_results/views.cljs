@@ -1,13 +1,13 @@
 (ns status-im.ui.screens.discover.search-results.views
   (:require-macros [status-im.utils.views :refer [defview letsubs]])
-  (:require [status-im.components.react :as react]
-            [status-im.components.icons.vector-icons :as vi]
-            [status-im.components.toolbar.view :refer [toolbar]]
+  (:require [status-im.ui.components.react :as react]
+            [status-im.ui.components.icons.vector-icons :as vi]
+            [status-im.ui.components.toolbar.view :refer [toolbar]]
             [status-im.ui.screens.discover.components.views :as components]
             [status-im.i18n :as i18n]
             [status-im.ui.screens.discover.styles :as styles]
             [status-im.ui.screens.contacts.styles :as contacts-styles]
-            [status-im.components.toolbar-new.view :as toolbar]))
+            [status-im.ui.components.toolbar-new.view :as toolbar]))
 
 ;; TOOD(oskarth): Refactor this, very similar to discover-all-hashtags view
 (defview discover-search-results []

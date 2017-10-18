@@ -2,11 +2,11 @@
   (:require-macros [status-im.utils.views :refer [defview letsubs]])
   (:require [re-frame.core :refer [dispatch]]
             status-im.utils.db
-            [status-im.components.react :refer [view text]]
-            [status-im.components.text-field.view :refer [text-field]]
-            [status-im.components.styles :as common]
-            [status-im.components.status-bar :refer [status-bar]]
-            [status-im.components.toolbar.view :refer [toolbar]]
+            [status-im.ui.components.react :refer [view text]]
+            [status-im.ui.components.text-field.view :refer [text-field]]
+            [status-im.ui.components.styles :as common]
+            [status-im.ui.components.status-bar :refer [status-bar]]
+            [status-im.ui.components.toolbar.view :refer [toolbar]]
             [status-im.chat.new-public-chat.styles :as styles]
             [status-im.chat.new-public-chat.db :as v]
             [status-im.i18n :refer [label]]

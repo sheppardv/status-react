@@ -1,7 +1,7 @@
 (ns status-im.debug.handlers
   (:require [re-frame.core :refer [after dispatch]]
             [status-im.utils.handlers :refer [register-handler] :as u]
-            [status-im.components.react :refer [http-bridge]]
+            [status-im.ui.components.react :refer [http-bridge]]
             [status-im.data-store.messages :as messages]
             [status-im.data-store.accounts :as accounts]
             [taoensso.timbre :as log]

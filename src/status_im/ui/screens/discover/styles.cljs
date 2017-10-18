@@ -1,7 +1,7 @@
 (ns status-im.ui.screens.discover.styles
   (:require-macros [status-im.utils.styles :refer [defstyle]])
-  (:require [status-im.components.styles :as styles]
-            [status-im.components.toolbar.styles :refer [toolbar-background2]]))
+  (:require [status-im.ui.components.styles :as styles]
+            [status-im.ui.components.toolbar.styles :refer [toolbar-background2]]))
 
 ;; Common
 

@@ -1,7 +1,7 @@
 (ns status-im.native-module.impl.module
   (:require-macros
     [cljs.core.async.macros :refer [go-loop go]])
-  (:require [status-im.components.react :as r]
+  (:require [status-im.ui.components.react :as r]
             [re-frame.core :refer [dispatch]]
             [taoensso.timbre :as log]
             [cljs.core.async :as async :refer [<! timeout]]
