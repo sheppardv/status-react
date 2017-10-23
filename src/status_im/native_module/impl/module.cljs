@@ -154,7 +154,8 @@
 (defn remove-duplicate-calls
   "Removes duplicates by [jail path] keys, remains the last one."
   [[all-keys calls] {:keys [jail-id path] :as call}]
-  (if (contains? all-keys [jail-id path])
+  (if (and (contains? all-keys [jail-id path])
+           (not= (second path) :subscription))
     [all-keys calls]
     [(conj all-keys [jail-id path])
      (conj calls call)]))
@@ -175,8 +176,8 @@
   which reduces chances of response shuffling"
   []
   (go-loop [_ nil]
-    (let [next-call (last @jail-calls)]
-      (swap! jail-calls butlast)
+    (let [next-call (first @jail-calls)]
+      (swap! jail-calls rest)
       (when next-call
         (execute-call next-call)))
     (recur (<! (timeout interval-between-calls)))))
