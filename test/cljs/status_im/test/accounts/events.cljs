@@ -91,10 +91,11 @@
           (testing ":account-update event"
 
             (let [new-account'' (assoc new-account'
-                                  :status "new status"
-                                  :name "new name")]
+                                       :status "new status"
+                                       :name "new name")]
 
-              (rf/dispatch [:set-current-account (:address new-account)])
+              (rf/dispatch [:set :accounts/current-account-id (:address new-account)])
+              (rf/dispatch [:set :current-public-key (:public-key new-account)])
 
               (rf/dispatch [:account-update {:status "new status" :name "new name"}])
 
@@ -108,6 +109,6 @@
 
                 (is (= {(:address account-from-realm) account-from-realm
                         (:address new-account)        (assoc new-account''
-                                                        :updates-private-key "new private"
-                                                        :updates-public-key "new public")}
+                                                             :updates-private-key "new private"
+                                                             :updates-public-key "new public")}
                        (update @accounts (:address new-account) dissoc :last-updated)))))))))))

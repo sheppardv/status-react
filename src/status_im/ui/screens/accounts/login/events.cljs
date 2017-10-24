@@ -64,15 +64,16 @@
 (defn wrap-with-initialize-geth-fx [db address password]
   (let [{:keys [network config]} (get-network-by-address db address)]
     {:initialize-geth-fx config
-     :db                 (assoc db :network network
-                                   :node/after-start [::login-account address password])}))
+     :db                 (assoc db
+                                :network network
+                                :node/after-start [::login-account address password])}))
 
 (register-handler-fx
   ::start-node
   (fn [{db :db} [_ address password]]
     (wrap-with-initialize-geth-fx
-      (assoc db :node/after-stop nil)
-      address password)))
+     (assoc db :node/after-stop nil)
+     address password)))
 
 (defn wrap-with-stop-node-fx [db address password]
   {:db         (assoc db :node/after-stop [::start-node address password])
@@ -84,7 +85,6 @@
        [_ address password account-creation?]]
     (let [{account-network :network} (get-network-by-address db address)
           db' (-> db
-                  (dissoc :db)
                   (assoc :accounts/account-creation? account-creation?)
                   (assoc-in [:accounts/login :processing] true))
           wrap-fn (cond (not status-node-started?)
@@ -105,27 +105,23 @@
           success (zero? (count error))
           db'     (assoc-in db [:accounts/login :processing] false)]
       (log/debug "Logged in account: " result)
-      (merge
-        {:db (if success db' (assoc-in db' [:accounts/login :error] error))}
-        (when success
-          (let [is-login-screen? (= (:view-id db) :login)
-                new-account?     (not is-login-screen?)]
-            (log/debug "Logged in: " (:view-id db) is-login-screen? new-account?)
-            {::clear-web-data nil
-             ::change-account [address new-account?]}))))))
+      (merge {:db (if success db' (assoc-in db' [:accounts/login :error] error))}
+             (when success
+               (let [is-login-screen? (= (:view-id db) :login)
+                     new-account?     (not is-login-screen?)]
+                 (log/debug "Logged in: " (:view-id db) is-login-screen? new-account?)
+                 {::clear-web-data nil
+                  ::change-account [address new-account?]}))))))
 
 (register-handler-fx
   :change-account-handler
   (fn [{db :db} [_ error address new-account?]]
     (if (nil? error)
-      {:db         (assoc db :accounts/login {})
-       :dispatch-n (concat
-                     [[:debug-server-stop]
-                      [:set-current-account address]
-                      [:initialize-account address]]
-                     (if new-account?
-                       [[:navigate-to-clean :chat-list]
-                        [:navigate-to :chat console-chat-id]]
-                       [[:navigate-to-clean :chat-list]
-                        [:navigate-to :chat-list]]))}
+      {:db         (dissoc db :accounts/login)
+       :dispatch-n [[:debug-server-stop]
+                    [:initialize-account address]
+                    [:navigate-to-clean :chat-list]
+                    (if new-account?
+                      [:navigate-to :chat console-chat-id]
+                      [:navigate-to :chat-list])]}
       (log/debug "Error changing acount: " error))))
