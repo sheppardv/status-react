@@ -5,19 +5,16 @@
                                                 animated-view
                                                 text
                                                 modal
-                                                touchable-highlight
-                                                list-view
-                                                list-item]]
+                                                touchable-highlight]]
             [status-im.components.icons.vector-icons :as vi]
+            [status-im.components.list.views :as list]
             [status-im.components.status-bar :refer [status-bar]]
             [status-im.components.chat-icon.screen :refer [chat-icon-view-action
                                                            chat-icon-view-menu-item]]
             [status-im.chat.styles.screen :as st]
-            [status-im.utils.listview :refer [to-datasource-inverted]]
             [status-im.utils.utils :refer [truncate-str]]
             [status-im.utils.datetime :as time]
             [status-im.utils.platform :as platform :refer [platform-specific]]
-            [status-im.components.invertible-scroll-view :refer [invertible-scroll-view]]
             [status-im.components.toolbar-new.view :as toolbar]
             [status-im.chat.views.toolbar-content :refer [toolbar-content-view]]
             [status-im.chat.views.message.message :refer [chat-message]]
@@ -72,7 +69,7 @@
 
 (defmethod message-row :datemark
   [{{:keys [value]} :row}]
-  (list-item [chat-datemark value]))
+  [chat-datemark value])
 
 (defmethod message-row :default
   [{:keys [contact-by-identity group-chat messages-count row index last-outgoing?]}]
@@ -83,7 +80,7 @@
                     (assoc :index index)
                     (assoc :last-message (= (js/parseInt index) (dec messages-count)))
                     (assoc :last-outgoing? last-outgoing?))]
-    (list-item [chat-message message])))
+   [chat-message message]))
 
 (defn toolbar-action []
   (let [show-actions (subscribe [:chat-ui-props :show-actions?])]
@@ -158,20 +155,20 @@
    loaded? [:all-messages-loaded?]
    current-chat-id [:get-current-chat-id]
    last-outgoing-message [:get-chat-last-outgoing-message @current-chat-id]]
-  (let [contacts' (contacts-by-identity contacts)
-        messages  (messages-with-timemarks messages message-extras)]
-    [list-view {:renderRow                 (fn [row _ index]
-                                             (message-row {:contact-by-identity contacts'
-                                                           :group-chat          group-chat
-                                                           :messages-count      (count messages)
-                                                           :row                 row
-                                                           :index               index
-                                                           :last-outgoing?      (= (:message-id last-outgoing-message) (:message-id row))}))
-                :renderScrollComponent     #(invertible-scroll-view (js->clj %))
-                :onEndReached              (when-not loaded? #(dispatch [:load-more-messages]))
-                :enableEmptySections       true
-                :keyboardShouldPersistTaps (if platform/android? :always :handled)
-                :dataSource                (to-datasource-inverted messages)}]))
+  (let [messages (messages-with-timemarks messages message-extras)]
+    [list/flat-list {:data                      messages
+                     :render-fn                 (fn [message index]
+                                                  (message-row {:contact-by-identity (contacts-by-identity contacts)
+                                                                :group-chat          group-chat
+                                                                :messages-count      (count messages)
+                                                                :row                 message
+                                                                :index               index
+                                                                :last-outgoing?      (= (:message-id last-outgoing-message) (:message-id message))}))
+                     :inverted                  true ;; TODO (jeluard) wip  requires RN 0.47
+                     :onEndReached              (fn [] (when-not loaded? (dispatch [:load-more-messages])))
+                     :enableEmptySections       true
+                     :keyboardShouldPersistTaps (if platform/android? :always :handled)}]))
+
 
 (defview chat []
   [group-chat [:chat :group-chat]

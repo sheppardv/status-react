@@ -17,7 +17,6 @@
 (def image-crop-picker      #js {})
 (def image-resizer          #js {})
 (def instabug               #js {})
-(def invertible-scroll-view #js {})
 (def linear-gradient        #js {})
 (def mapbox-gl              #js {:setAccessToken (fn [])})
 (def nfc                    #js {})

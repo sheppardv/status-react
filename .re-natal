@@ -4,7 +4,6 @@
   "androidHost": "10.0.3.2",
   "modules": [
     "react-native-contacts",
-    "react-native-invertible-scroll-view",
     "awesome-phonenumber",
     "realm",
     "react-native-i18n",

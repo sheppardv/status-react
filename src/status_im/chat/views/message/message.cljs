@@ -148,7 +148,7 @@
                          :current-chat-id current-chat-id}]])))
 
 (defn message-view
-  [{:keys [same-author index group-chat] :as message} content]
+  [{:keys [same-author group-chat] :as message} content]
   [view (st/message-view message)
    (when group-chat [message-author-name message])
    content])
@@ -374,10 +374,9 @@
       {:display-name "chat-message"
        :component-will-mount
        (fn []
-         (let [{:keys [bot command] :as content} (get-in message [:content])
-               message' (assoc message :jail-id bot)]
+         (let [{:keys [bot command] :as content} (get-in message [:content])]
            (when (and command (not @preview))
-             (dispatch [:request-command-preview message']))))
+             (dispatch [:request-command-preview (assoc message :jail-id bot)]))))
 
        :component-did-mount
        (fn []

@@ -32,13 +32,11 @@
 (def app-registry (get-react-property "AppRegistry"))
 (def app-state (get-react-property "AppState"))
 (def net-info (get-react-property "NetInfo"))
-(def navigator (get-class "Navigator"))
 (def view (get-class "View"))
 
 (def status-bar (get-class "StatusBar"))
 (def drawer-layout (adapt-class drawer))
 
-(def list-view-class (get-class "ListView"))
 (def scroll-view (get-class "ScrollView"))
 (def web-view (get-class "WebView"))
 (def keyboard-avoiding-view-class (get-class "KeyboardAvoidingView"))
@@ -104,11 +102,6 @@
            :resizeMode "contain"
            :style      style}]))
 
-;; TODO Migrate to new FlatList and SectionList when appropriate (see components.list). ListView will eventually get deprecated
-;; see https://facebook.github.io/react-native/docs/using-a-listview.html
-(defn list-view [props]
-  [list-view-class (merge {:enableEmptySections true} props)])
-
 (defn touchable-highlight [props content]
   [touchable-highlight-class
    (merge {:underlay-color :transparent} props)
@@ -126,6 +119,8 @@
 (defn linear-gradient [props]
   [gradient props])
 
+
+;; TODO deprecate
 (defn list-item [component]
   (r/as-element component))
 

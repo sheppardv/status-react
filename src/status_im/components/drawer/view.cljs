@@ -12,7 +12,6 @@
                                                 text
                                                 text-input
                                                 list-item
-                                                list-view
                                                 drawer-layout
                                                 touchable-without-feedback
                                                 touchable-highlight
@@ -24,7 +23,6 @@
             [status-im.ui.screens.profile.db :as profile.db]
             [status-im.utils.datetime :as time]
             [status-im.utils.gfycat.core :as gfycat]
-            [status-im.utils.listview :as lw]
             [status-im.utils.platform :as platform]
             [status-im.utils.utils :as utils]
             [status-im.utils.money :as money]
@@ -100,13 +98,6 @@
                                                       placeholder
                                                       status)
                                    :on-press        #(rf/dispatch [:my-profile.drawer/edit-status])}])])))
-
-(defn render-separator-fn [transactions-count]
-  (fn [_ row-id _]
-    (when (< row-id (dec transactions-count))
-      (list-item
-        ^{:key row-id}
-        [common/separator {} st/transactions-list-separator]))))
 
 (defview current-network []
   (letsubs [network [:get-current-account-network]]
