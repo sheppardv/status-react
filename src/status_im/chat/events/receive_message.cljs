@@ -11,22 +11,22 @@
             [status-im.data-store.messages :as msg-store]))
 
 (re-frame/reg-cofx
- :pop-up-chat?
- (fn [cofx]
-   (assoc cofx :pop-up-chat? (fn [chat-id]
-                               (or (not (chat-store/exists? chat-id))
-                                   (chat-store/is-active? chat-id))))))
+  :pop-up-chat?
+  (fn [cofx]
+    (assoc cofx :pop-up-chat? (fn [chat-id]
+                                (or (not (chat-store/exists? chat-id))
+                                    (chat-store/is-active? chat-id))))))
 
 (re-frame/reg-cofx
- :get-last-clock-value
- (fn [cofx]
-   (assoc cofx :get-last-clock-value msg-store/get-last-clock-value)))
+  :get-last-clock-value
+  (fn [cofx]
+    (assoc cofx :get-last-clock-value msg-store/get-last-clock-value)))
 
 (re-frame/reg-cofx
- :current-timestamp
- (fn [cofx]
-   ;; TODO (janherich) why is actual timestmap generation in random namespace ?
-   (assoc cofx :current-timestamp (random/timestamp))))
+  :current-timestamp
+  (fn [cofx]
+    ;; TODO (janherich) why is actual timestmap generation in random namespace ?
+    (assoc cofx :current-timestamp (random/timestamp))))
 
 (defn- get-current-identity
   [{:accounts/keys [accounts current-account-id]}]
@@ -63,8 +63,7 @@
                                    (assoc-in [:chats chat-identifier :last-message] message))
                  :dispatch-n   [[:upsert-chat! {:chat-id    chat-identifier
                                                 :group-chat group-chat?}]
-                                [:request-command-message-data enriched-message :short-preview]
-                                [:update-suggestions]]
+                                [:request-command-message-data enriched-message :short-preview]]
                  :save-message (dissoc enriched-message :new?)}
 
           (get-in enriched-message [:content :command])
@@ -72,7 +71,7 @@
 
           (= (:content-type enriched-message) const/content-type-command-request)
           (update :dispatch-n conj [:add-request chat-identifier enriched-message])
-
+          ;; TODO(janherich) this shouldn't be dispatch, but plain function call, refactor after adding requests is refactored
           true
           (update :dispatch-n conj [:update-suggestions])))
       {:db db})))
