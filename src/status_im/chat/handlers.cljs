@@ -28,7 +28,8 @@
             status-im.chat.handlers.send-message
             [cljs.core.async :as a]
             status-im.chat.handlers.webview-bridge
-            [taoensso.timbre :as log]))
+            [taoensso.timbre :as log]
+            [status-im.chat.models :as model]))
 
 (defn load-messages!
   ([db] (load-messages! db nil))
@@ -57,7 +58,8 @@
 
 (defmethod nav/preload-data! :chat
   [{:keys [current-chat-id] :accounts/keys [current-account-id] :as db} [_ _ id]]
-  (let [chat-id           (or id current-chat-id)
+  (assoc db :current-chat-id (or id current-chat-id))
+  #_(let [chat-id           (or id current-chat-id)
         messages          (get-in db [:chats chat-id :messages])
         db'               (-> db
                               (assoc :current-chat-id chat-id)
@@ -65,16 +67,22 @@
         commands-loaded?  (get-in db [:contacts/contacts chat-id :commands-loaded?])
         bot-url           (get-in db [:contacts/contacts chat-id :bot-url])
         was-opened?       (get-in db [:chats chat-id :was-opened?])
+        callbacks (get-in db [:chat-loaded-callbacks chat-id])
         call-init-command #(do
-                             (dispatch [:invoke-chat-loaded-callbacks chat-id])
+                             (doseq [callback callbacks]
+                               (callback))
+                             #_(dispatch [:invoke-chat-loaded-callbacks chat-id])
                              (when (and (not was-opened?) bot-url)
                                (status/call-function!
                                  {:chat-id  chat-id
                                   :function :init
-                                  :context  {:from current-account-id}})))]
+                                  :context  {:from current-account-id}})))
+        db' (model/set-chat-ui-props db' {:validation-messages nil})
+        db' (status-im.chat.handlers.requests/load-requests! db' [nil chat-id])
+        db' (assoc-in db' [:chat-loaded-callbacks chat-id] nil)]
        ; Reset validation messages, if any
-       (dispatch [:set-chat-ui-props {:validation-messages nil}])
-       (dispatch [:load-requests! chat-id])
+       #_(dispatch [:set-chat-ui-props {:validation-messages nil}])
+       #_(dispatch [:load-requests! chat-id])
         ;; todo rewrite this. temporary fix for https://github.com/status-im/status-react/issues/607
        #_(dispatch [:load-commands! chat-id])
        (if-not commands-loaded?
@@ -86,6 +94,45 @@
          (-> db'
              load-messages!
              init-chat))))
+
+(register-handler
+ :finish-loading-chat
+  (fn [{:keys [current-chat-id] :accounts/keys [current-account-id] :as db}]
+    (let [chat-id           current-chat-id
+          messages          (get-in db [:chats chat-id :messages])
+          db'               (-> db
+                                (assoc :current-chat-id chat-id)
+                                (assoc-in [:chats chat-id :was-opened?] true))
+          commands-loaded?  (get-in db [:contacts/contacts chat-id :commands-loaded?])
+          bot-url           (get-in db [:contacts/contacts chat-id :bot-url])
+          was-opened?       (get-in db [:chats chat-id :was-opened?])
+          callbacks (get-in db [:chat-loaded-callbacks chat-id])
+          call-init-command #(do
+                               (doseq [callback callbacks]
+                                 (callback))
+                               #_(dispatch [:invoke-chat-loaded-callbacks chat-id])
+                               (when (and (not was-opened?) bot-url)
+                                 (status/call-function!
+                                  {:chat-id  chat-id
+                                   :function :init
+                                   :context  {:from current-account-id}})))
+          db' (model/set-chat-ui-props db' {:validation-messages nil})
+          db' (status-im.chat.handlers.requests/load-requests! db' [nil chat-id])
+          db' (assoc-in db' [:chat-loaded-callbacks chat-id] nil)]
+      ; Reset validation messages, if any
+      #_(dispatch [:set-chat-ui-props {:validation-messages nil}])
+      #_(dispatch [:load-requests! chat-id])
+      ;; todo rewrite this. temporary fix for https://github.com/status-im/status-react/issues/607
+      #_(dispatch [:load-commands! chat-id])
+      (if-not commands-loaded?
+        (dispatch [:load-commands! chat-id call-init-command])
+        (call-init-command))
+      (if (and (seq messages)
+               (not= (count messages) 1))
+        db'
+        (-> db'
+            load-messages!
+            init-chat)))))
 
 (register-handler :add-chat-loaded-callback
   (fn [db [_ chat-id callback]]

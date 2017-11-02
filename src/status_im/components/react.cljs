@@ -1,4 +1,5 @@
 (ns status-im.components.react
+  (:require-macros [status-im.utils.views :as view])
   (:require [reagent.core :as r]
             [status-im.components.styles :as st]
             [status-im.utils.utils :as u]
@@ -191,3 +192,18 @@
 ;; Emoji
 
 (def emojilib (js/require "emojilib"))
+
+(view/defview with-activity-indicator [{:keys [timeout style enabled?]} comp]
+  (view/letsubs
+    [loading (r/atom true)]
+    {:component-did-mount (fn []
+                            (if (or (nil? timeout)
+                                    (> 100 timeout))
+                              (reset! loading false)
+                              (js/setTimeout (fn []
+                                               (reset! loading false))
+                                             timeout)))}
+    (if (and (not enabled?) @loading)
+      [view {:style style}
+       [activity-indicator {:animating true}]]
+      comp)))

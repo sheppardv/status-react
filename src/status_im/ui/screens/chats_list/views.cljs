@@ -79,23 +79,25 @@
             edit?        [:get-in [:chat-list-ui-props :edit?]]
             search?      [:get-in [:toolbar-search :show]]
             tabs-hidden? [:tabs-hidden?]]
-    [react/view st/chats-container
-     (cond
-       edit?   [toolbar-edit]
-       search? [toolbar-search]
-       :else   [toolbar-view])
-     [react/list-view {:dataSource      (to-datasource chats)
-                       :renderRow       (fn [[id :as row] _ _]
-                                          (react/list-item ^{:key id} [chat-list-item row edit?]))
-                       :renderHeader    (when-not (empty? chats) renderers/list-header-renderer)
-                       :renderFooter    (when-not (empty? chats)
-                                          #(react/list-item [react/view
-                                                             [common/list-footer]
-                                                             [common/bottom-shadow]]))
-                       :renderSeparator renderers/list-separator-renderer
-                       :style           st/list-container}]
-     (when (and (not edit?)
-                (not search?)
-                (get-in platform-specific [:chats :action-button?]))
-       [chats-action-button])
-     [offline-view]]))
+    [react/with-activity-indicator
+     {:timeout 100}
+     [react/view st/chats-container
+      (cond
+        edit? [toolbar-edit]
+        search? [toolbar-search]
+        :else [toolbar-view])
+      [react/list-view {:dataSource      (to-datasource chats)
+                        :renderRow       (fn [[id :as row] _ _]
+                                           (react/list-item ^{:key id} [chat-list-item row edit?]))
+                        :renderHeader    (when-not (empty? chats) renderers/list-header-renderer)
+                        :renderFooter    (when-not (empty? chats)
+                                           #(react/list-item [react/view
+                                                              [common/list-footer]
+                                                              [common/bottom-shadow]]))
+                        :renderSeparator renderers/list-separator-renderer
+                        :style           st/list-container}]
+      (when (and (not edit?)
+                 (not search?)
+                 (get-in platform-specific [:chats :action-button?]))
+        [chats-action-button])
+      [offline-view]]]))

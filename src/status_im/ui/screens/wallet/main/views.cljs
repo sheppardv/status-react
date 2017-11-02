@@ -148,8 +148,10 @@
             syncing?         [:syncing?]
             balance-loading? [:wallet/balance-loading?]
             error-message    [:wallet/error-message?]]
-    [react/view {:style wallet.styles/wallet-container}
-     [toolbar-view]
-     [react/view components.styles/flex
-      [main-section portfolio-value portfolio-change syncing? error-message]
-      [asset-section balance prices-loading? balance-loading?]]]))
+    [react/with-activity-indicator
+     {:timeout 200}
+     [react/view {:style wallet.styles/wallet-container}
+      [toolbar-view]
+      [react/view components.styles/flex
+       [main-section portfolio-value portfolio-change syncing? error-message]
+       [asset-section balance prices-loading? balance-loading?]]]]))

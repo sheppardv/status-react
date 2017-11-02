@@ -10,7 +10,8 @@
             [status-im.ui.screens.chats-list.views :refer [chats-list]]
             [status-im.ui.screens.contacts.views :refer [contact-groups-list]]
             [status-im.ui.screens.discover.views :refer [discover]]
-            [status-im.ui.screens.wallet.main.views :refer [wallet]])
+            [status-im.ui.screens.wallet.main.views :refer [wallet]]
+            [taoensso.timbre :as log])
   (:require-macros [status-im.utils.views :as views]))
 
 (defn- tab-content [{:keys [title icon-active icon-inactive]}]
@@ -50,6 +51,7 @@
 (views/defview main-tabs []
   (views/letsubs [keyboard-height [:get :keyboard-height]
                   current-tab     [:get :view-id]]
+    {:component-will-unmount (fn [] (log/debug :UNM (.now js/Date)))}
     [react/view styles/flex
      [status-bar {:type (if (= current-tab :wallet) :wallet :main)}]
      [drawer-view

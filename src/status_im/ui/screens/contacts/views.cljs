@@ -2,7 +2,7 @@
   (:require-macros [status-im.utils.views :refer [defview letsubs]])
   (:require [re-frame.core :refer [dispatch]]
             [status-im.components.common.common :as common]
-            [status-im.components.react :refer [view text touchable-highlight scroll-view]]
+            [status-im.components.react :refer [view text touchable-highlight scroll-view] :as react]
             [status-im.components.icons.vector-icons :as vi]
             [status-im.components.native-action-button :refer [native-action-button
                                                                native-action-button-item]]
@@ -122,23 +122,25 @@
             edit?          [:get-in [:contacts/ui-props :edit?]]
             groups         [:all-added-groups]
             tabs-hidden?   [:tabs-hidden?]]
-    [view {:flex 1}
-     [view st/contacts-list-container
-      (if edit?
-        [toolbar-edit]
-        [toolbar-view])
-      (if (pos? (+ (count groups) contacts-count))
-        [scroll-view {:style st/contact-groups}
-         (when (pos? contacts-count)
-           [contact-group-form {:contacts       contacts
-                                :contacts-count contacts-count
-                                :edit?          edit?}])
-         (for [group groups]
-           ^{:key group}
-           [contact-group-view {:group group
-                                :edit? edit?}])]
-        [view st/empty-contact-groups
-         [vi/icon :icons/group-big {:style st/empty-contacts-icon}]
-         [text {:style st/empty-contacts-text} (label :t/no-contacts)]])]
-     (when (and android? (not edit?))
-       [contacts-action-button])]))
+    [react/with-activity-indicator
+     {:timeout 500}
+     [view {:flex 1}
+      [view st/contacts-list-container
+       (if edit?
+         [toolbar-edit]
+         [toolbar-view])
+       (if (pos? (+ (count groups) contacts-count))
+         [scroll-view {:style st/contact-groups}
+          (when (pos? contacts-count)
+            [contact-group-form {:contacts       contacts
+                                 :contacts-count contacts-count
+                                 :edit?          edit?}])
+          (for [group groups]
+            ^{:key group}
+            [contact-group-view {:group group
+                                 :edit? edit?}])]
+         [view st/empty-contact-groups
+          [vi/icon :icons/group-big {:style st/empty-contacts-icon}]
+          [text {:style st/empty-contacts-text} (label :t/no-contacts)]])]
+      (when (and android? (not edit?))
+        [contacts-action-button])]]))

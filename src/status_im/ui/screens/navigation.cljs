@@ -1,7 +1,8 @@
 (ns status-im.ui.screens.navigation
   (:require [re-frame.core :refer [enrich]]
             [status-im.utils.handlers :refer [register-handler-db]]
-            [status-im.constants :refer [console-chat-id]]))
+            [status-im.constants :refer [console-chat-id]]
+            [taoensso.timbre :as log]))
 
 (defmulti preload-data!
           (fn [db [_ view-id]] (or view-id (:view-id db))))
@@ -28,6 +29,7 @@
   :navigate-to
   (enrich preload-data!)
   (fn [{:keys [view-id] :as db} [_ new-view-id]]
+    (log/debug :nav (.now js/Date))
     (if (= view-id new-view-id)
       db
       (push-view db new-view-id))))

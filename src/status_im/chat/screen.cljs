@@ -1,5 +1,5 @@
 (ns status-im.chat.screen
-  (:require-macros [status-im.utils.views :refer [defview]])
+  (:require-macros [status-im.utils.views :refer [defview] :as view])
   (:require [re-frame.core :refer [subscribe dispatch]]
             [status-im.components.react :refer [view
                                                 animated-view
@@ -7,7 +7,8 @@
                                                 modal
                                                 touchable-highlight
                                                 list-view
-                                                list-item]]
+                                                list-item]
+             :as react]
             [status-im.components.icons.vector-icons :as vi]
             [status-im.components.status-bar :refer [status-bar]]
             [status-im.components.chat-icon.screen :refer [chat-icon-view-action
@@ -31,7 +32,8 @@
             [status-im.components.sync-state.offline :refer [offline-view]]
             [status-im.constants :refer [content-type-status]]
             [taoensso.timbre :as log]
-            [clojure.string :as str]))
+            [clojure.string :as str]
+            [reagent.core :as r]))
 
 (defn contacts-by-identity [contacts]
   (->> contacts
@@ -180,17 +182,31 @@
    show-emoji? [:chat-ui-props :show-emoji?]
    layout-height [:get :layout-height]
    input-text [:chat :input-text]]
-  {:component-did-mount    #(do (dispatch [:check-and-open-dapp!])
-                                (dispatch [:update-suggestions]))
+  {:component-will-mount   (fn [] (log/debug :chat-will-mount (.now js/Date)))
+   :component-did-mount    (fn []
+                             (log/debug :chat-did-mount (.now js/Date))
+                             (dispatch [:finish-loading-chat])
+                             (dispatch [:check-and-open-dapp!])
+                             (dispatch [:update-suggestions]))
    :component-will-unmount #(dispatch [:set-chat-ui-props {:show-emoji? false}])}
-  [view {:style st/chat-view
+  [view {:style     st/chat-view
          :on-layout (fn [event]
                       (let [height (.. event -nativeEvent -layout -height)]
                         (when (not= height layout-height)
                           (dispatch [:set-layout-height height]))))}
    [chat-toolbar]
-   [messages-view group-chat]
-   [input/container {:text-empty? (str/blank? input-text)}]
+   [react/with-activity-indicator
+    {:style {:flex-grow       1
+             :align-items     :center
+             :justify-content :center}}
+    [messages-view group-chat]]
+   [react/with-activity-indicator {}
+    [input/container {:text-empty? (str/blank? input-text)}]]
+
+   ;[chat-toolbar]
+   ;[messages-view group-chat]
+   ;[input/container {:text-empty? (str/blank? input-text)}]
+
    (when show-actions?
      [actions-view])
    (when show-bottom-info?

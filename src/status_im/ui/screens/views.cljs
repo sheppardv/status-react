@@ -53,7 +53,8 @@
             [status-im.ui.screens.network-settings.views :refer [network-settings]]
             [status-im.ui.screens.network-settings.add-rpc.views :refer [add-rpc-url]]
             [status-im.ui.screens.network-settings.network-details.views :refer [network-details]]
-            [status-im.ui.screens.network-settings.parse-json.views :refer [paste-json-text]]))
+            [status-im.ui.screens.network-settings.parse-json.views :refer [paste-json-text]]
+            [taoensso.timbre :as log]))
 
 (defn validate-current-view
   [current-view signed-up?]
@@ -66,6 +67,8 @@
   (letsubs [signed-up? [:signed-up?]
             view-id    [:get :view-id]
             modal-view [:get :modal]]
+    {:component-will-update (fn [] (log/debug :main-will-update (.now js/Date)))
+     :component-did-update  (fn [] (log/debug :main-did-update (.now js/Date)))}
     (when view-id
       (let [current-view (validate-current-view view-id signed-up?)]
         (let [component (case current-view
